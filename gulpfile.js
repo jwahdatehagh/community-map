@@ -28,6 +28,7 @@ gulp.task('vendorJs', function() {
 
 gulp.task('js', function() {
   gulp.src([
+      './app/map.js',
       './app/app.js'
     ])
     .pipe(concat('app.js'))
