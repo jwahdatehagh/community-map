@@ -1,1 +1,1 @@
-function initialize(){var e={zoom:14,center:new google.maps.LatLng(48.135324,11.583721),disableDefaultUI:!0};map=new google.maps.Map(document.getElementById("map-canvas"),e)}var map;google.maps.event.addDomListener(window,"load",initialize),console.log("hello world");
+function initialize(){var e={zoom:14,center:new google.maps.LatLng(48.77385,9.176832),disableDefaultUI:!0};map=new google.maps.Map(document.getElementById("map-canvas"),e)}var map;google.maps.event.addDomListener(window,"load",initialize),console.log("hello world");
