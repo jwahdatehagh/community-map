@@ -1,0 +1,22 @@
+{
+  "name": "community-map",
+  "version": "0.0.1",
+  "authors": [
+    "jalil wahdatehagh <j.wahdatehagh@gmail.com>"
+  ],
+  "description": "project for udacity",
+  "main": "index.html",
+  "license": "MIT",
+  "homepage": "www.jalilwahdatehagh.com",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "knockout": "~3.3.0"
+  }
+}
