@@ -32,12 +32,17 @@
 
     <div id="result-list" data-bind="css: { active: listActive() }">
       <div class="heading">
-        <h2><span data-bind="text: locationsCount"></span> Results</h2>
+        <h2><span data-bind="text: locationsCount"></span> Results <span data-bind="if: locationsCount">for <em data-bind="text:searchString">""</em></span></h2>
       </div>
 
       <div class="result-list-items" data-bind="foreach: locations">
         <div class="item">
           <h3 data-bind="text: name"></h3>
+          <address data-bind="text: address"></address>
+          <p><small>
+            <span  data-bind="if: checkins"><span data-bind="text: checkins"></span> people have been here</span>
+          </small></p>
+          <span data-bind="if: loved" class="icon"><i class="fa fa-heart"></i></span>
         </div>
       </div>
     </div>

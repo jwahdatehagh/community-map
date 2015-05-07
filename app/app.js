@@ -38,6 +38,13 @@ var Location = function(data) {
   self.name = ko.observable(data.name);
   self.lat = ko.observable(data.lat);
   self.lon = ko.observable(data.lon);
+  self.address = ko.observable(data.address);
+  self.checkins = ko.observable(data.checkins);
+  self.hearts = ko.observable(data.hearts);
+
+  self.loved = ko.computed(function() {
+    return self.hearts() > 5;
+  });
 };
 
 var MapSearch = function() {
@@ -45,11 +52,15 @@ var MapSearch = function() {
   self.searchString = ko.observable();
   self.loading = ko.observable(false);
   self.search = function() {
-    // disable search btn
-    self.loading(true);
 
     // reset location results
     self.locations([]);
+
+    // if no searchterm, abort
+    if (!self.searchString()) { return; }
+
+    // disable search btn
+    self.loading(true);
 
     $.ajax({
       dataType: "json",
@@ -58,7 +69,7 @@ var MapSearch = function() {
         client_id: config.foursquare.CLIENT_ID,
         client_secret: config.foursquare.CLIENT_SECRET,
         v: config.foursquare.API_VERSION,
-        ll: "48.773850,9.176832",
+        ll: map.getCenter().toUrlValue(),
         query: self.searchString()
       }
     }).then(function(data) {
@@ -76,11 +87,17 @@ var MapSearch = function() {
         var data = {
           name: venue.name,
           lat: venue.location.lat,
-          lon: venue.location.lng
+          lon: venue.location.lng,
+          address: venue.location.formattedAddress[0],
+          checkins: venue.stats.checkinsCount,
+          hearts: venue.stats.tipCount
         };
-        self.locations.push(new Location(data));
+
+        // only add this if it's a nice result...
+        if (data.checkins && data.hearts) {
+          self.locations.push(new Location(data));
+        }
       }
-      console.log(self.locations()[0].name());
 
     }, function(error) {
       alert('my bad...');
