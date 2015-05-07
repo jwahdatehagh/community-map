@@ -7,7 +7,8 @@
 
     <title>Map Project</title>
 
-    <!-- Bootstrap -->
+    <!-- Styles -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <link href="dist/css/app.css" rel="stylesheet">
 
     <!--[if lt IE 9]>
@@ -18,13 +19,29 @@
   <body>
 
     <div id="floating-search">
-      <div class="input-group input-group-lg">
-        <input type="text" class="form-control" placeholder="Search for...">
-        <span class="input-group-btn">
-          <button class="btn btn-default" type="button">Search</button>
-        </span>
-      </div><!-- /input-group -->
+      <form data-bind="submit: search">
+        <div class="input-group input-group-lg">
+          <input type="text" class="form-control" data-bind="value: searchString" placeholder="Search for...">
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="submit" data-bind="css: { disabled: loading() }">Search</button>
+          </span>
+        </div><!-- /input-group -->
+      </form>
     </div>
+
+
+    <div id="result-list" data-bind="css: { active: listActive() }">
+      <div class="heading">
+        <h2><span data-bind="text: locationsCount"></span> Results</h2>
+      </div>
+
+      <div class="result-list-items" data-bind="foreach: locations">
+        <div class="item">
+          <h3 data-bind="text: name"></h3>
+        </div>
+      </div>
+    </div>
+
 
     <!-- container for the map -->
     <div id="map-canvas"></div>
