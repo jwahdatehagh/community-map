@@ -19,23 +19,31 @@
   <body>
 
     <div id="floating-search">
-      <form data-bind="submit: search">
+      <form data-bind="submit: search, ifnot: locationsCount">
         <div class="input-group input-group-lg">
-          <input type="text" class="form-control" data-bind="value: searchString" placeholder="Search for...">
+          <input type="text" class="form-control" data-bind="value: searchString" placeholder="Search for..." id="search-input">
           <span class="input-group-btn">
-            <button class="btn btn-default" type="submit" data-bind="css: { disabled: loading() }">Search</button>
+            <button class="btn btn-primary" type="submit" data-bind="css: { disabled: loading() }">Search</button>
           </span>
         </div><!-- /input-group -->
       </form>
+      <div data-bind="if: locationsCount">
+        <div class="input-group input-group-lg">
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button" data-bind="click: newSearch"><i class="fa fa-arrow-circle-left"></i></button>
+          </span>
+          <input type="text" class="form-control" data-bind="value: filterString, valueUpdate: 'afterkeydown'" placeholder="Filter results..." id="filter-input">
+        </div><!-- /input-group -->
+      </div>
     </div>
 
 
     <div id="result-list" data-bind="css: { active: listActive() }">
       <div class="heading">
-        <h2><span data-bind="text: locationsCount"></span> Results <span data-bind="if: locationsCount">for <em data-bind="text:searchString">""</em></span></h2>
+        <h2><span data-bind="text: filteredLocationsCount"></span> Results <span data-bind="if: locationsCount">for <em>"<span data-bind="text:searchString"></span>"</em><span data-bind="if: filterString" class="gray"> > <em>"<span data-bind="text:filterString"></span>"</em></span></span></h2>
       </div>
 
-      <div class="result-list-items" data-bind="foreach: locations">
+      <div class="result-list-items" data-bind="foreach: filteredLocations">
         <div class="item" data-bind="click: $parent.focusLocation, css: { active: focused() }">
           <h3 data-bind="text: name"></h3>
           <address data-bind="text: address"></address>

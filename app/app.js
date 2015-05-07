@@ -107,6 +107,9 @@ var MapSearch = function() {
         }
       }
 
+      // focus filter
+      $('#filter-input').focus();
+
     }, function(error) {
       alert('my bad...');
     });
@@ -138,10 +141,31 @@ var MapSearch = function() {
     location.marker.setAnimation(google.maps.Animation.DROP);
     location.setFocused();
   };
-
   self.listActive = ko.computed(function() {
     return self.locations().length > 0;
   });
+
+  self.filterString = ko.observable();
+  self.filteredLocations = ko.computed(function() {
+    var filterString = self.filterString() || '';
+    return self.locations().filter(function(location) {
+      var filtered = location.name().toLowerCase().indexOf(filterString.toLowerCase()) > -1;
+      if (filtered) {
+        location.marker.setMap(map);
+      } else {
+        location.marker.setMap(null);
+      }
+      return filtered;
+    });
+  });
+  self.filteredLocationsCount = ko.computed(function() {
+    return self.filteredLocations().length;
+  });
+  self.newSearch = function() {
+    self.clearLocations();
+    self.searchString('');
+    $('#search-input').focus();
+  };
 
 };
 
