@@ -1,24 +1,3 @@
-console.log('hello world');
-
-// var initialData = [
-//     { name: "Well-Travelled Kitten", sales: 352, price: 75.95 },
-//     { name: "Speedy Coyote", sales: 89, price: 190.00 },
-//     { name: "Furious Lizard", sales: 152, price: 25.00 },
-//     { name: "Indifferent Monkey", sales: 1, price: 99.95 },
-//     { name: "Brooding Dragon", sales: 0, price: 6350 },
-//     { name: "Ingenious Tadpole", sales: 39450, price: 0.35 },
-//     { name: "Optimistic Snail", sales: 420, price: 1.50 }
-// ];
-
-
-
-// https://api.foursquare.com/v2/venues/search
-//   ?client_id=C0J5BP55MVKSIO5LDPV3DTZQFG0OH3TZCJPZL4C3KLMROETC
-//   &client_secret=IM21TX0DTYM5DZ4ABJ2VABJUJR5U3NVKLGZVSJZMPWQQFM3J
-//   &v=20130815
-//   &ll=40.7,-74
-//   &query=sushi
-
 var config = {
   foursquare: {
     URL: 'https://api.foursquare.com/v2/venues/search',
@@ -29,9 +8,18 @@ var config = {
 };
 
 
-// what models?
-// - Searchbar / MapSearch
-// - Location
+var map;
+function initialize() {
+  var mapOptions = {
+    zoom: 14,
+    center: new google.maps.LatLng(48.773850, 9.176832),
+    disableDefaultUI: true
+  };
+  map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+}
+
+google.maps.event.addDomListener(window, 'load', initialize);
+
 
 var Location = function(data) {
   var self = this;
@@ -41,6 +29,11 @@ var Location = function(data) {
   self.address = ko.observable(data.address);
   self.checkins = ko.observable(data.checkins);
   self.hearts = ko.observable(data.hearts);
+  self.marker = new google.maps.Marker({
+      position: new google.maps.LatLng(data.lat,data.lon),
+      map: map,
+      title: data.name
+  });
 
   self.loved = ko.computed(function() {
     return self.hearts() > 5;
@@ -54,7 +47,7 @@ var MapSearch = function() {
   self.search = function() {
 
     // reset location results
-    self.locations([]);
+    self.clearLocations();
 
     // if no searchterm, abort
     if (!self.searchString()) { return; }
@@ -110,6 +103,14 @@ var MapSearch = function() {
   self.locationsCount = ko.computed(function() {
     return self.locations().length;
   });
+  self.clearLocations = function() {
+    var locations = self.locations();
+    var length = locations.length;
+    for (var i = 0; i < length; i++) {
+      locations[i].marker.setMap(null);
+    }
+    self.locations([]);
+  };
 
   self.listActive = ko.computed(function() {
     return self.locations().length > 0;
