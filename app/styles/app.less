@@ -92,6 +92,9 @@
     border-top: 5px solid green;
     border-radius: @border-radius-small;
     position: relative;
+
+    transition: all .4s;
+
     h3 {
       font-size: @font-size-base;
       margin-top: 7px;
@@ -111,6 +114,11 @@
 
     &:hover {
       cursor: pointer;
+    }
+
+    &.active {
+      border-color: red;
+      box-shadow: 0px 2px 6px @gray-light;
     }
   }
 

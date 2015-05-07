@@ -36,7 +36,7 @@
       </div>
 
       <div class="result-list-items" data-bind="foreach: locations">
-        <div class="item">
+        <div class="item" data-bind="click: $parent.focusLocation, css: { active: focused() }">
           <h3 data-bind="text: name"></h3>
           <address data-bind="text: address"></address>
           <p><small>
@@ -49,7 +49,7 @@
 
 
     <!-- container for the map -->
-    <div id="map-canvas"></div>
+    <div id="map-canvas" data-bind="click: clearLocationFocus"></div>
 
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
     <script src="dist/js/vendor.js"></script>

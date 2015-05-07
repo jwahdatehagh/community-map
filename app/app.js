@@ -18,6 +18,8 @@ function initialize() {
   map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 }
 
+var infowindow = new google.maps.InfoWindow();
+
 google.maps.event.addDomListener(window, 'load', initialize);
 
 
@@ -32,12 +34,25 @@ var Location = function(data) {
   self.marker = new google.maps.Marker({
       position: new google.maps.LatLng(data.lat,data.lon),
       map: map,
-      title: data.name
+      title: data.name,
+      animation: google.maps.Animation.DROP
   });
 
   self.loved = ko.computed(function() {
     return self.hearts() > 5;
   });
+
+  self.focused = ko.observable(false);
+  self.setFocused = function() {
+    self.focused(true);
+    infowindow.setContent(self.name());
+    infowindow.open(map, self.marker);
+  };
+
+  google.maps.event.addListener(self.marker, 'click', function() {
+    self.setFocused();
+  });
+
 };
 
 var MapSearch = function() {
@@ -111,11 +126,22 @@ var MapSearch = function() {
     }
     self.locations([]);
   };
+  self.clearLocationFocus = function() {
+    var locations = self.locations();
+    var length = locations.length;
+    for (var i = 0; i < length; i++) {
+      locations[i].focused(false);
+    }
+  };
+  self.focusLocation = function(location) {
+    self.clearLocationFocus();
+    location.marker.setAnimation(google.maps.Animation.DROP);
+    location.setFocused();
+  };
 
   self.listActive = ko.computed(function() {
     return self.locations().length > 0;
   });
-
 
 };
 
