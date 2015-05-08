@@ -54,6 +54,7 @@ var MapSearch = function() {
     // disable search btn
     self.loading(true);
 
+    // make the request to foursquare
     $.ajax({
       dataType: "json",
       url: config.foursquare.URL,
@@ -128,8 +129,9 @@ var MapSearch = function() {
   // focus a location
   self.focusLocation = function(location) {
     self.clearLocationFocus();
-    location.marker.setAnimation(google.maps.Animation.DROP);
     location.setFocused();
+    location.marker.setAnimation(google.maps.Animation.DROP);
+    map.panTo(location.marker.getPosition());
   };
   self.listActive = ko.computed(function() {
     return self.locations().length > 0;
