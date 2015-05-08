@@ -7,22 +7,6 @@ var config = {
   }
 };
 
-
-var map;
-function initialize() {
-  var mapOptions = {
-    zoom: 14,
-    center: new google.maps.LatLng(48.773850, 9.176832),
-    disableDefaultUI: true
-  };
-  map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-}
-
-var infowindow = new google.maps.InfoWindow();
-
-google.maps.event.addDomListener(window, 'load', initialize);
-
-
 var Location = function(data) {
   var self = this;
   self.name = ko.observable(data.name);
@@ -37,7 +21,6 @@ var Location = function(data) {
       title: data.name,
       animation: google.maps.Animation.DROP
   });
-
   self.loved = ko.computed(function() {
     return self.hearts() > 5;
   });
@@ -49,6 +32,7 @@ var Location = function(data) {
     infowindow.open(map, self.marker);
   };
 
+  // add listener for when a marker gets clicked
   google.maps.event.addListener(self.marker, 'click', function() {
     self.setFocused();
   });
@@ -87,6 +71,7 @@ var MapSearch = function() {
       // handle unknown response
       if (!data || !data.response || !data.response.venues) { return; }
 
+      // create location object for each venue
       var venues = data.response.venues;
       var length = venues.length;
       for (var i = 0; i < length; i++) {
@@ -111,16 +96,17 @@ var MapSearch = function() {
       $('#filter-input').focus();
 
     }, function(error) {
+      console.error(error);
       alert('my bad...');
     });
-
-    console.log('searching for ' + self.searchString());
   };
 
   self.locations = ko.observableArray([]);
   self.locationsCount = ko.computed(function() {
     return self.locations().length;
   });
+
+  // remove all locations from the map
   self.clearLocations = function() {
     var locations = self.locations();
     var length = locations.length;
@@ -129,6 +115,8 @@ var MapSearch = function() {
     }
     self.locations([]);
   };
+
+  // clear the focus of any location
   self.clearLocationFocus = function() {
     var locations = self.locations();
     var length = locations.length;
@@ -136,6 +124,8 @@ var MapSearch = function() {
       locations[i].focused(false);
     }
   };
+
+  // focus a location
   self.focusLocation = function(location) {
     self.clearLocationFocus();
     location.marker.setAnimation(google.maps.Animation.DROP);
@@ -145,6 +135,7 @@ var MapSearch = function() {
     return self.locations().length > 0;
   });
 
+  // filter the locations
   self.filterString = ko.observable();
   self.filteredLocations = ko.computed(function() {
     var filterString = self.filterString() || '';
@@ -161,6 +152,8 @@ var MapSearch = function() {
   self.filteredLocationsCount = ko.computed(function() {
     return self.filteredLocations().length;
   });
+
+  // reset search
   self.newSearch = function() {
     self.clearLocations();
     self.searchString('');
@@ -169,4 +162,18 @@ var MapSearch = function() {
 
 };
 
+// initialize the map
+var map;
+function initialize() {
+  var mapOptions = {
+    zoom: 14,
+    center: new google.maps.LatLng(48.773850, 9.176832),
+    disableDefaultUI: true
+  };
+  map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+}
+var infowindow = new google.maps.InfoWindow();
+google.maps.event.addDomListener(window, 'load', initialize);
+
+// initialize knockout
 ko.applyBindings(new MapSearch());
